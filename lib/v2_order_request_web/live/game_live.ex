@@ -70,18 +70,8 @@ defmodule V2OrderRequestWeb.GameLive do
   end
 
   defp fetch(socket, game_name) do
-    # assign(socket, orders: Orders.list_orders())
-    # Orders.list_orders()
     Logger.info(action: "fecting orders", game: game_name)
 
-    Enum.map(Orders.list_orders(game_name),
-      fn(i) -> %{
-        game_name: i.game_name,
-        item: i.item,
-        amount: i.amount,
-        assigned_to: i.assigned_to,
-        requested_by: i.requested_by
-      } end
-    )
+    Orders.list_orders(game_name)
   end
 end

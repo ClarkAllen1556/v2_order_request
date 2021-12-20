@@ -32,7 +32,15 @@ defmodule V2OrderRequest.Orders do
   end
 
   def list_orders (game_name) do
-    Repo.all(from o in Orders, where: ilike(o.game_name, ^game_name))
+    Repo.all(from o in Orders, where: ilike(o.game_name, ^game_name),
+      select: %{
+        game_name: o.game_name,
+        item: o.item,
+        amount: o.amount,
+        assigned_to: o.assigned_to,
+        requested_by: o.requested_by
+      }
+    )
   end
 
   def create_order (attrs \\ %{}) do
