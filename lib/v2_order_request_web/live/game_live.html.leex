@@ -21,7 +21,7 @@
             <%= f = form_for :order, "#", id: "order-form", phx_submit: :create_new_order %> <%#, phx_change: :form_updated %>
                 <%= text_input f, :item, placeholder: "What item?" %>
                 <%= number_input f, :amount, placeholder: "Amount?" %>
-                <%# <%= checkbox(f, :fulfilled, value: :false) %> %>
+                <%# <%= checkbox(f, :fulfilled, value: :false) %>
                 <%= text_input f, :assigned_to, placeholder: "Assigned to?" %>
                 <%= text_input f, :requested_by, placeholder: "Requested by?" %>
                 <%= submit "Create" %>

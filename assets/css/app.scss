@@ -1,6 +1,40 @@
 /* This file is for your main application css. */
 @import "./phoenix.css";
 
+// ---- Added by AC1556
+#game-list {
+  .game-entry {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: auto auto;
+  }
+}
+
+#order-header {
+  display: flex;
+  
+  button {
+    margin-left: auto;
+  }
+}
+
+.game-order {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 2rem;
+
+  .label {
+    flex-basis: 100%;
+  }
+}
+
+#order-form {
+  display: flex;
+  column-gap: 2rem;
+}
+
+// -----
+
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
