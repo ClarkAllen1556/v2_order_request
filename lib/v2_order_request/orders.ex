@@ -34,6 +34,7 @@ defmodule V2OrderRequest.Orders do
   def list_orders (game_name) do
     Repo.all(from o in Orders, where: ilike(o.game_name, ^game_name),
       select: %{
+        id: o.id,
         game_name: o.game_name,
         item: o.item,
         amount: o.amount,
@@ -41,6 +42,16 @@ defmodule V2OrderRequest.Orders do
         requested_by: o.requested_by
       }
     )
+  end
+
+  def delete_order (order_id) do
+    # case Repo.delete(todo) do
+    #   {:ok, struct}
+    #   {:error, %{error: "Failed to delete"}}
+    # end
+    order = Repo.get!(Orders, order_id)
+    IO.inspect(order)
+    Repo.delete(order)
   end
 
   def create_order (attrs \\ %{}) do

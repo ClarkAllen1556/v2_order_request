@@ -31,6 +31,9 @@ defmodule V2OrderRequestWeb.GameLive do
       <div class="label"> <p> <%= order.amount %> </p> </div>
       <div class="label"> <p> <%= order.assigned_to %> </p> </div>
       <div class="label"> <p> <%= order.requested_by %> </p> </div>
+      <div>
+        <button phx-click="delete-order" phx-value-order="<%= order.id %>"> 🗑 </button>
+      </div>
       """
       # <div class="label"> <%= checkbox(order, :fulfilled, value: order["fulfilled"]) %> </div>
   end
@@ -40,6 +43,15 @@ defmodule V2OrderRequestWeb.GameLive do
     Logger.info(event: "new-order", order: order, orders: socket.assigns.orders)
 
     Orders.create_order(order)
+
+    {:noreply, assign(socket, orders: fetch(socket, socket.assigns.game_name))}
+  end
+
+  @impl true
+  def handle_info(%{event: "refresh"}, socket) do
+    Logger.info(event: "refresh")
+
+    # Orders.delete_order(order)
 
     {:noreply, assign(socket, orders: fetch(socket, socket.assigns.game_name))}
   end
@@ -60,6 +72,18 @@ defmodule V2OrderRequestWeb.GameLive do
     Logger.info(event: "new-order", game: socket.assigns.game_name, orders: socket.assigns.orders)
 
     {:noreply, assign(socket, creating_order: :true)}
+  end
+
+  @impl true
+  def handle_event("delete-order", %{"order" => order}, socket) do
+    Logger.info(event: "delete-order", game: socket.assigns.game_name, order_id: order)
+
+    Orders.delete_order(order)
+
+    V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "refresh")
+    # V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "deleted-order", order)
+
+    {:noreply, socket}
   end
 
   @impl true
