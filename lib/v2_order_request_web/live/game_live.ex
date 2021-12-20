@@ -48,10 +48,8 @@ defmodule V2OrderRequestWeb.GameLive do
   end
 
   @impl true
-  def handle_info(%{event: "refresh"}, socket) do
+  def handle_info(%{event: "refresh", payload: order}, socket) do
     Logger.info(event: "refresh")
-
-    # Orders.delete_order(order)
 
     {:noreply, assign(socket, orders: fetch(socket, socket.assigns.game_name))}
   end
@@ -80,8 +78,7 @@ defmodule V2OrderRequestWeb.GameLive do
 
     Orders.delete_order(order)
 
-    V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "refresh")
-    # V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "deleted-order", order)
+    V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "refresh", order)
 
     {:noreply, socket}
   end
