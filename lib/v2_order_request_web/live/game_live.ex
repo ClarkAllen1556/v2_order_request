@@ -1,5 +1,6 @@
 defmodule V2OrderRequestWeb.GameLive do
   use V2OrderRequestWeb, :live_view
+  alias V2OrderRequest.Orders
 
   require Logger
 
@@ -19,18 +20,17 @@ defmodule V2OrderRequestWeb.GameLive do
         game_name: game_name,
         creating_order: :false,
         topic: topic,
-        # order: order,
-        orders: []
+        orders: fetch(socket, game_name)
       ) #, temporary_assigns: [orders: []]
     }
   end
 
   def display_order (order) do
     ~E"""
-      <div class="label"> <p> <%= order["item"] %> </p> </div>
-      <div class="label"> <p> <%= order["amount"] %> </p> </div>
-      <div class="label"> <p> <%= order["assigned_to"] %> </p> </div>
-      <div class="label"> <p> <%= order["requested_by"] %> </p> </div>
+      <div class="label"> <p> <%= order.item %> </p> </div>
+      <div class="label"> <p> <%= order.amount %> </p> </div>
+      <div class="label"> <p> <%= order.assigned_to %> </p> </div>
+      <div class="label"> <p> <%= order.requested_by %> </p> </div>
       """
       # <div class="label"> <%= checkbox(order, :fulfilled, value: order["fulfilled"]) %> </div>
   end
@@ -39,14 +39,16 @@ defmodule V2OrderRequestWeb.GameLive do
   def handle_info(%{event: "new-order", payload: order}, socket) do
     Logger.info(event: "new-order", order: order, orders: socket.assigns.orders)
 
-    {:noreply, assign(socket, orders: socket.assigns.orders ++ [order])}
+    Orders.create_order(order)
+
+    {:noreply, assign(socket, orders: fetch(socket, socket.assigns.game_name))}
   end
 
   @impl true
   def handle_event("create_new_order", %{"order" => order}, socket) do
     Logger.info(event: "create_new_order", order: order)
 
-    new_order = Map.put(order, :uuid, UUID.uuid4())
+    new_order = Map.put(order, "game_name", socket.assigns.game_name)
 
     V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "new-order", new_order)
 
@@ -55,7 +57,7 @@ defmodule V2OrderRequestWeb.GameLive do
 
   @impl true
   def handle_event("new-order", _params, socket) do
-    Logger.info(event: "new-order", game: socket.assigns.game_name)
+    Logger.info(event: "new-order", game: socket.assigns.game_name, orders: socket.assigns.orders)
 
     {:noreply, assign(socket, creating_order: :true)}
   end
@@ -65,5 +67,21 @@ defmodule V2OrderRequestWeb.GameLive do
     Logger.info(event: "cancel", game: socket.assigns.game_name)
 
     {:noreply, assign(socket, creating_order: :false)}
+  end
+
+  defp fetch(socket, game_name) do
+    # assign(socket, orders: Orders.list_orders())
+    # Orders.list_orders()
+    Logger.info(action: "fecting orders", game: game_name)
+
+    Enum.map(Orders.list_orders(game_name),
+      fn(i) -> %{
+        game_name: i.game_name,
+        item: i.item,
+        amount: i.amount,
+        assigned_to: i.assigned_to,
+        requested_by: i.requested_by
+      } end
+    )
   end
 end

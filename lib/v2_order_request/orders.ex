@@ -1,6 +1,10 @@
 defmodule V2OrderRequest.Orders do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
+
+  alias V2OrderRequest.Repo
+  alias V2OrderRequest.Orders
 
   schema "orders" do
     field :amount, :integer
@@ -20,6 +24,20 @@ defmodule V2OrderRequest.Orders do
   def changeset(orders, attrs) do
     orders
     |> cast(attrs, [:game_name, :item, :amount, :assigned_to, :requested_by, :fulfilled, :created_on, :completed_on, :note])
-    |> validate_required([:game_name, :item, :amount, :assigned_to, :requested_by, :fulfilled, :created_on, :completed_on, :note])
+    |> validate_required([:game_name, :item, :amount, :requested_by])
+  end
+
+  def list_orders do
+    Repo.all(Orders)
+  end
+
+  def list_orders (game_name) do
+    Repo.all(from o in Orders, where: ilike(o.game_name, ^game_name))
+  end
+
+  def create_order (attrs \\ %{}) do
+    %Orders{}
+    |> Orders.changeset(attrs)
+    |> Repo.insert()
   end
 end
