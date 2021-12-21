@@ -1,3 +1,14 @@
+<div id="order-header">
+  <h2> Games list </h2>
+
+  <%= unless @creating_game do %>
+    <button phx-click="new-game"> New game </button>
+  <% else %>
+    <strong> will be change set </strong>
+    <button phx-click="cancel"> Cancel </button>
+  <% end %>
+</div>
+
 <div id="game-list">
   <%= for game <- @games do %>
     <div class="game-entry">

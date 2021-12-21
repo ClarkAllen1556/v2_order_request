@@ -10,9 +10,24 @@ defmodule V2OrderRequestWeb.PageLive do
 
     {:ok,
       assign(socket,
-        games: fetch()
+        games: fetch(),
+        creating_game: :false
       )
     }
+  end
+
+  @impl true
+  def handle_event("new-game", _params, socket) do
+    Logger.info(event: "create-game")
+
+    {:noreply, assign(socket, creating_game: :true)}
+  end
+
+  @impl true
+  def handle_event("cancel", _params, socket) do
+    Logger.info(event: "cancel")
+
+    {:noreply, assign(socket, creating_game: :false)}
   end
 
   @impl true
