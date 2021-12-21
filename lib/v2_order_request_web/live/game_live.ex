@@ -20,7 +20,7 @@ defmodule V2OrderRequestWeb.GameLive do
         game_name: game_name,
         creating_order: :false,
         topic: topic,
-        orders: fetch(socket, game_name)
+        orders: fetch(game_name)
       ) #, temporary_assigns: [orders: []]
     }
   end
@@ -42,16 +42,14 @@ defmodule V2OrderRequestWeb.GameLive do
   def handle_info(%{event: "new-order", payload: order}, socket) do
     Logger.info(event: "new-order", order: order, orders: socket.assigns.orders)
 
-    Orders.create_order(order)
-
-    {:noreply, assign(socket, orders: fetch(socket, socket.assigns.game_name))}
+    {:noreply, assign(socket, orders: fetch(socket.assigns.game_name))}
   end
 
   @impl true
-  def handle_info(%{event: "refresh", payload: order}, socket) do
+  def handle_info(%{event: "refresh", payload: _order}, socket) do
     Logger.info(event: "refresh")
 
-    {:noreply, assign(socket, orders: fetch(socket, socket.assigns.game_name))}
+    {:noreply, assign(socket, orders: fetch(socket.assigns.game_name))}
   end
 
   @impl true
@@ -59,6 +57,8 @@ defmodule V2OrderRequestWeb.GameLive do
     Logger.info(event: "create_new_order", order: order)
 
     new_order = Map.put(order, "game_name", socket.assigns.game_name)
+    Orders.create_order(new_order)
+
 
     V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "new-order", new_order)
 
@@ -90,7 +90,7 @@ defmodule V2OrderRequestWeb.GameLive do
     {:noreply, assign(socket, creating_order: :false)}
   end
 
-  defp fetch(socket, game_name) do
+  defp fetch(game_name) do
     Logger.info(action: "fecting orders", game: game_name)
 
     Orders.list_orders(game_name)
