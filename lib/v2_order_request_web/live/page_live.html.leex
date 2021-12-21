@@ -1,12 +1,14 @@
 <div id="game-list">
-  <div class="game-entry">
-    <h3> Runesape </h3>
-    <button
-      phx-click="redirect-game"
-      phx-value-game_name="runescape"
-      title="See orders for this game"
-    >
-      See orders
-    </button>
-  </div>
+  <%= for game <- @games do %>
+    <div class="game-entry">
+      <h3> <%= game.game_name %> </h3>
+        <button
+          phx-click="redirect-game"
+          phx-value-game_name="<%= game.game_name %>"
+          title="See orders for this game"
+        >
+          See orders
+        </button>
+    </div>
+  <% end %>
 <div>

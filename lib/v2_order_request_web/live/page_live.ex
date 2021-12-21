@@ -1,11 +1,18 @@
 defmodule V2OrderRequestWeb.PageLive do
   use V2OrderRequestWeb, :live_view
+  alias V2OrderRequest.Games
 
   require Logger
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{})}
+    Logger.info(mounted: "root page")
+
+    {:ok,
+      assign(socket,
+        games: fetch()
+      )
+    }
   end
 
   @impl true
@@ -15,5 +22,11 @@ defmodule V2OrderRequestWeb.PageLive do
     slug = "/" <> game_name
 
     {:noreply, push_redirect(socket, to: slug)}
+  end
+
+  defp fetch do
+    Logger.info(action: "fetching games")
+
+    Games.list_games()
   end
 end
