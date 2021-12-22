@@ -1,6 +1,7 @@
 defmodule V2OrderRequestWeb.GameLive do
   use V2OrderRequestWeb, :live_view
   alias V2OrderRequest.Orders
+  alias V2OrderRequest.Games
 
   require Logger
 
@@ -8,6 +9,10 @@ defmodule V2OrderRequestWeb.GameLive do
   # footprint needs to have params called 'id' b/c that's what rount is named in router
   def mount(%{"id" => game_name}, _session, socket) do
     Logger.info(mounted: game_name)
+
+    unless Games.game_exists(game_name) do
+      Games.create_game(%{game_name: game_name})
+    end
 
     topic = "game" <> game_name
 

@@ -29,4 +29,8 @@ defmodule V2OrderRequest.Games do
   def list_games do
     Repo.all(Games)
   end
+
+  def game_exists (game_name) do
+    Repo.exists?(from g in Games, where: g.game_name == ^game_name)
+  end
 end

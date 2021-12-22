@@ -4,8 +4,13 @@
   <%= unless @creating_game do %>
     <button phx-click="new-game"> New game </button>
   <% else %>
-    <strong> will be change set </strong>
-    <button phx-click="cancel"> Cancel </button>
+    <div class="form">
+      <%= f = form_for @changeset, "#", [phx_submit: :create_new_game] %>
+        <%= text_input f, :game_name %>
+        <%= submit "💾" %>
+        <button phx-click="cancel"> Cancel </button>
+      </form>
+    </div>
   <% end %>
 </div>
 

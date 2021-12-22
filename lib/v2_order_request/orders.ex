@@ -46,7 +46,6 @@ defmodule V2OrderRequest.Orders do
 
   def delete_order (order_id) do
     order = Repo.get!(Orders, order_id)
-    IO.inspect(order)
     Repo.delete(order)
   end
 
