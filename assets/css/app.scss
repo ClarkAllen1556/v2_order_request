@@ -4,9 +4,17 @@
 // ---- Added by AC1556
 #game-list {
   .game-entry {
-    display: grid;
-    justify-content: space-between;
-    grid-template-columns: auto auto;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    .game-note {
+      margin-left: 5rem;
+    }
+
+    button {
+      margin-left: auto;
+    }
   }
 }
 

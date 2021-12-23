@@ -46,14 +46,14 @@ defmodule V2OrderRequestWeb.PageLive do
   end
 
   @impl true
-  def handle_event("create_new_game", %{"games" => %{"game_name" => game_name}}, socket) do
-    Logger.info(event: "create_new_game", game_name: game_name)
+  def handle_event("create_new_game", %{"games" => game}, socket) do
+    Logger.info(event: "create_new_game", game: game)
 
-    unless Games.game_exists(game_name) do
-      Games.create_game(%{game_name: game_name})
+    unless Games.game_exists(game["game_name"]) do
+      Games.create_game(game)
     end
 
-    V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "new-game-created", game_name)
+    V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "new-game-created", game["game_name"])
 
     {:noreply, socket}
   end

@@ -7,6 +7,7 @@
     <div class="form">
       <%= f = form_for @changeset, "#", [phx_submit: :create_new_game] %>
         <%= text_input f, :game_name %>
+        <%= text_input f, :note %>
         <%= submit "💾" %>
         <button phx-click="cancel"> Cancel </button>
       </form>
@@ -18,6 +19,7 @@
   <%= for game <- @games do %>
     <div class="game-entry">
       <h3> <%= game.game_name %> </h3>
+      <p class="game-note"> <em> <%= game.note %> </em> </p>
         <button
           phx-click="redirect-game"
           phx-value-game_name="<%= game.game_name %>"
