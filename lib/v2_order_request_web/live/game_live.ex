@@ -25,7 +25,8 @@ defmodule V2OrderRequestWeb.GameLive do
         game_name: game_name,
         creating_order: :false,
         topic: topic,
-        orders: fetch(game_name)
+        orders: fetch(game_name),
+        changeset: Orders.changeset(%Orders{}, %{})
       ) #, temporary_assigns: [orders: []]
     }
   end
@@ -58,7 +59,7 @@ defmodule V2OrderRequestWeb.GameLive do
   end
 
   @impl true
-  def handle_event("create_new_order", %{"order" => order}, socket) do
+  def handle_event("create_new_order", %{"orders" => order}, socket) do
     Logger.info(event: "create_new_order", order: order)
 
     new_order = Map.put(order, "game_name", socket.assigns.game_name)
