@@ -44,6 +44,18 @@
   }
 }
 
+#order-list {
+  .game-order {
+    border-radius: 2.5rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  
+    &:hover {
+      background-color: lightgray;
+    }
+  }
+}
+
 #order-form {
   display: flex;
   column-gap: 2rem;

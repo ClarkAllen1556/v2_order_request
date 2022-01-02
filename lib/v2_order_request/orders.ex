@@ -39,9 +39,20 @@ defmodule V2OrderRequest.Orders do
         item: o.item,
         amount: o.amount,
         assigned_to: o.assigned_to,
-        requested_by: o.requested_by
+        requested_by: o.requested_by,
+        fulfilled: o.fulfilled
       }
     )
+  end
+
+  def get_order(order_id) do
+    Repo.get!(Orders, order_id)
+  end
+
+  def update_order(%Orders{} = order, attrs) do
+    order
+    |> Orders.changeset(attrs)
+    |> Repo.update()
   end
 
   def delete_order (order_id) do
@@ -49,7 +60,7 @@ defmodule V2OrderRequest.Orders do
     Repo.delete(order)
   end
 
-  def create_order (attrs \\ %{}) do
+  def create_order(attrs \\ %{}) do
     %Orders{}
     |> Orders.changeset(attrs)
     |> Repo.insert()

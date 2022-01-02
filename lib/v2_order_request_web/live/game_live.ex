@@ -33,15 +33,22 @@ defmodule V2OrderRequestWeb.GameLive do
 
   def display_order (order) do
     ~E"""
-      <div class="label"> <p> <%= order.item %> </p> </div>
-      <div class="label"> <p> <%= order.amount %> </p> </div>
-      <div class="label"> <p> <%= order.assigned_to %> </p> </div>
-      <div class="label"> <p> <%= order.requested_by %> </p> </div>
+      <div class="label"> <%= order.item %> </div>
+      <div class="label"> <%= order.amount %> </div>
+      <div class="label"> <%= order.assigned_to %> </div>
+      <div class="label"> <%= order.requested_by %> </div>
+      <div> <%= checkbox(
+          :order_fulfilled,
+          "order_fulfilled",
+          phx_click: "toggle_done",
+          phx_value_order: order.id,
+          value: order.fulfilled
+        )
+        %> </div>
       <div>
         <button phx-click="delete-order" phx-value-order="<%= order.id %>"> 🗑 </button>
       </div>
       """
-      # <div class="label"> <%= checkbox(order, :fulfilled, value: order["fulfilled"]) %> </div>
   end
 
   @impl true
@@ -72,8 +79,20 @@ defmodule V2OrderRequestWeb.GameLive do
   end
 
   @impl true
-  def handle_event("new-order", _params, socket) do
-    Logger.info(event: "new-order", game: socket.assigns.game_name, orders: socket.assigns.orders)
+  def handle_event("toggle_done", %{"order" => order_id}, socket) do
+    Logger.info(event: "toggle_done", game: socket.assigns.game_name, orders: order_id)
+
+    order = Orders.get_order(order_id)
+    Orders.update_order(order, %{fulfilled: !order.fulfilled})
+
+    V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "refresh", order)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("edit-order", _params, socket) do
+    Logger.info(event: "edit-order", game: socket.assigns.game_name, orders: socket.assigns.orders)
 
     {:noreply, assign(socket, creating_order: :true)}
   end
@@ -87,6 +106,13 @@ defmodule V2OrderRequestWeb.GameLive do
     V2OrderRequestWeb.Endpoint.broadcast(socket.assigns.topic, "refresh", order)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("toggle-create-new-order", _params, socket) do
+    Logger.info(event: "toggle-create-new-order", game: socket.assigns.game_name, orders: socket.assigns.orders)
+
+    {:noreply, assign(socket, creating_order: :true)}
   end
 
   @impl true
